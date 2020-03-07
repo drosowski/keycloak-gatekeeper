@@ -1,0 +1,153 @@
+---
+# Source: proxyinjector/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: proxyinjector
+    group: com.stakater.platform
+    provider: stakater
+    version: v0.0.23
+    chart: "proxyinjector-v0.0.23"
+    release: "proxyinjector"
+    heritage: "Tiller"
+  name: proxyinjector
+  namespace: greetingservice
+spec:
+  replicas: 1
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      app: proxyinjector
+      group: com.stakater.platform
+      provider: stakater
+  template:
+    metadata:
+      labels:
+        app: proxyinjector
+        group: com.stakater.platform
+        provider: stakater
+    spec:
+      containers:
+        - env:
+            - name: CONFIG_FILE_PATH
+              value: "/etc/ProxyInjector/config.yml"
+          image: "stakater/proxyinjector:v0.0.23"
+          imagePullPolicy: IfNotPresent
+          name: proxyinjector
+          volumeMounts:
+            - mountPath: /etc/ProxyInjector
+              name: config-volume
+      serviceAccountName: proxyinjector
+      volumes:
+        - configMap:
+            name: proxyinjector
+          name: config-volume
+
+---
+# Source: proxyinjector/templates/rbac.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app: proxyinjector
+    group: com.stakater.platform
+    provider: stakater
+    version: v0.0.23
+    chart: "proxyinjector-v0.0.23"
+    release: "proxyinjector"
+    heritage: "Tiller"
+  name: proxyinjector
+  namespace: greetingservice
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app: proxyinjector
+    group: com.stakater.platform
+    provider: stakater
+    version: v0.0.23
+    chart: "proxyinjector-v0.0.23"
+    release: "proxyinjector"
+    heritage: "Tiller"
+  name: proxyinjector-role
+  namespace: greetingservice
+rules:
+  - apiGroups:
+      - ""
+      - "extensions"
+      - "apps"
+    resources:
+      - deployments
+      - daemonsets
+      - statefulsets
+      - services
+      - configmaps
+    verbs:
+      - list
+      - get
+      - watch
+      - update
+      - create
+      - patch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app: proxyinjector
+    group: com.stakater.platform
+    provider: stakater
+    version: v0.0.23
+    chart: "proxyinjector-v0.0.23"
+    release: "proxyinjector"
+    heritage: "Tiller"
+  name: proxyinjector-role-binding
+  namespace: greetingservice
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: proxyinjector-role
+subjects:
+  - kind: ServiceAccount
+    name: proxyinjector
+    namespace: greetingservice
+
+---
+# Source: proxyinjector/templates/secrets.yaml
+
+---
+# Source: proxyinjector/templates/configmap.yaml
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels:
+    app: proxyinjector
+    version: v0.0.23
+    group: com.stakater.platform
+    provider: stakater
+    chart: "proxyinjector-v0.0.23"
+    release: "proxyinjector"
+    heritage: "Tiller"
+  name: proxyinjector
+  namespace: greetingservice
+data:
+  config.yml: |-
+    proxyconfig:
+      gatekeeper-image : "keycloak/keycloak-gatekeeper:6.0.1"
+      enable-default-deny: true
+      secure-cookie: false
+      verbose: true
+      enable-logging: true
+      cors-origins:
+      - '*'
+      cors-methods:
+      - GET
+      - POST
+      resources:
+      - uri: '/*'
+      scopes:
+      - 'good-service'
+  
