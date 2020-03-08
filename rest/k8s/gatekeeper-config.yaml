@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gatekeeper-config
+  namespace: greetingservice
+data:
+  gatekeeper-config.yaml: |
+    discovery-url: http://keycloak.keycloak.svc:8180/auth/realms/greetingservice
+    skip-openid-provider-tls-verify: true
+    client-id: greetingservice-client
+    client-secret: 57803581-1d67-4851-9646-59b73018b6b4
+    listen: :3000
+    enable-refresh-tokens: true
+    enable-encrypted-token: false
+    encryption-key: HA6KnOVUOK2nSvVa
+    upstream-url: http://127.0.0.1:8080
+    no-redirects: true
+    scopes: [openid]
+    resources:
+    - uri: /*
+      # the methods on this url that should be protected, if missing, we assuming all
+      methods:
+      - GET
+      # a list of roles the user must have in order to accces urls under the above
+      roles:
+        - greet
