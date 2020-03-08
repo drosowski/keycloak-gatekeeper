@@ -2,12 +2,12 @@ apiVersion: v1
 kind: Service
 metadata:
   name: keycloak
-  namespace: greetingservice
+  namespace: keycloak
 spec:
   ports:
     - name: http
       port: 8180
-      nodePort: 30080
+      nodePort: 30081
       targetPort: keycloak-http
   selector:
     app: keycloak

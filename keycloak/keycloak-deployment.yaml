@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: keycloak
-  namespace: greetingservice
+  namespace: keycloak
 spec:
   selector:
     matchLabels:
@@ -26,7 +26,7 @@ spec:
             postStart:
               exec:
                 command: ["/bin/sh", "-c", "/opt/jboss/keycloak/bin/add-user-keycloak.sh -r master -u keycloak -p keycloak123; /opt/jboss/keycloak/bin/add-user-keycloak.sh -r greetingservice -u gsuser -p gspass;"]
-          args: ["-Djboss.socket.binding.port-offset=100"]
+          args: ["-Djboss.socket.binding.port-offset=100", "-b=0.0.0.0"]
           imagePullPolicy: IfNotPresent
           name: keycloak
           ports:

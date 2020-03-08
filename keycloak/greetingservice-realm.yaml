@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: greetingservice-realm
-  namespace: greetingservice
+  namespace: keycloak
 data:
   greetingservice-realm.json: |
     {
