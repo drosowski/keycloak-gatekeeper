@@ -17,10 +17,13 @@ data:
     no-redirects: true
     scopes: [openid]
     resources:
-    - uri: /*
-      # the methods on this url that should be protected, if missing, we assuming all
+    - uri: /greeting
       methods:
       - GET
-      # a list of roles the user must have in order to accces urls under the above
       roles:
         - greet
+    - uri: /setgreeting
+      methods:
+      - POST
+      roles:
+        - edit
