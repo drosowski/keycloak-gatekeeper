@@ -1,0 +1,8 @@
+# curl -d 'client_id=greetingservice-client' -d 'client_secret=57803581-1d67-4851-9646-59b73018b6b4' -d 'username=gsuser' -d 'password=gspass' -d 'grant_type=password' -d 'scope=openid' http://keycloak.keycloak.svc:8180/auth/realms/greetingservice/protocol/openid-connect/token
+POST http://keycloak.keycloak.svc:8180/auth/realms/greetingservice/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+client_id=greetingservice-client&client_secret=57803581-1d67-4851-9646-59b73018b6b4&username=gsadmin&password=gspass&grant_type=password&scope=openid
+
+###
+

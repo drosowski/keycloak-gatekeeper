@@ -1,0 +1,62 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: reverseservice
+  namespace: reverseservice
+spec:
+  ports:
+    - name: http
+      nodePort: 30090
+      port: 3000
+      targetPort: 3000
+  selector:
+    app: reverseservice
+  type: NodePort
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reverseservice
+  namespace: reverseservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: reverseservice
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: reverseservice
+    spec:
+      containers:
+        - name: service-gatekeeper
+          image: keycloak/keycloak-gatekeeper:7.0.0
+          imagePullPolicy: IfNotPresent
+          args:
+            - --config=/etc/config/gatekeeper-config.yaml
+            - --enable-logging=true
+            - --enable-json-logging=true
+            - --verbose=true
+            - --enable-forwarding=true
+            - --forwarding-username=gsuser
+            - --forwarding-password=gspass
+            - --forwarding-domain=greetingservice.svc.cluster.local
+          volumeMounts:
+            - name: gatekeeper-config
+              mountPath: /etc/config
+        - image: de.smartsquare/reverseservice
+          imagePullPolicy: IfNotPresent
+          name: reverseservice
+          ports:
+            - containerPort: 8080
+      restartPolicy: Always
+      volumes:
+        - name: gatekeeper-config
+          configMap:
+            defaultMode: 420
+            name: gatekeeper-config
+            items:
+              - key: gatekeeper-config.yaml
+                path: gatekeeper-config.yaml
