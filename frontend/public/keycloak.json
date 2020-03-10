@@ -1,0 +1,7 @@
+{
+  "realm" : "greetingservice",
+  "auth-server-url" : "http://localhost:8180/auth",
+  "ssl-required" : "external",
+  "resource" : "greetingservice-client",
+  "enable-cors": true
+}
