@@ -31,18 +31,6 @@ Otherwise you will get a passive aggressive but expressive `403 (Forbidden)`.
 
 This way you can test the different integrations of Keycloak. Have fun and stay safe!
 
-## Gatekeeper
-
-The configuration for gatekeeper is in the `master` branch.
-As gatekeeper runs as a sidecar container along the greetingservice, you have to run the service in the kubernetes cluster.
-
-In the `rest` directory:
-
-1. `mvn compile jib:dockerBuild`
-2. `kubectl apply -f k8s`
-
-The service is then available at `http://localhost:30080` (see `greet.http` and `setgreeting.http`).
-
 ## Spring Boot Adapter
 
 https://www.keycloak.org/docs/latest/securing_apps/index.html#_spring_boot_adapter
@@ -56,3 +44,28 @@ https://www.keycloak.org/docs/latest/securing_apps/index.html#_spring_security_a
 
 The configuration for the Spring Boot adapter can be found in the branch `springsecurity-adapter`. 
 Just start the app with the main class (`RestServiceApplication`) from your IDE.
+
+## Gatekeeper
+
+The configuration for gatekeeper is in the `master` branch.
+As gatekeeper runs as a sidecar container along the greetingservice, you have to run the service in the kubernetes cluster.
+
+In the `rest` directory:
+
+1. `mvn compile jib:dockerBuild`
+2. `kubectl apply -f k8s`
+
+The service is then available at `http://localhost:30080` (see `greet.http` and `setgreeting.http`).
+
+## Forward-Signing Requests
+
+Let's explore another great feature of gatekeeper, namely forward-signing requests.
+You can attach gatekeeper to any service that you wish to grant authentication to a given service.
+
+Ok, slowly. We have our `greeting` service that is guarded by gatekeeper.
+Now we have another service, called `reverse` that needs access to the `greetingservice`.
+We could either
+1. build authentication in the `reverse` service or
+2. Use gatekeeper.
+
+In this usecase gatekeeper acts as a proxy that automatically fetches the `access_token` from keycloak and fill the `Authorization` header. 
