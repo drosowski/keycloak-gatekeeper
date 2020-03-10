@@ -7,8 +7,8 @@ spec:
   ports:
     - name: http
       nodePort: 30090
-      port: 3000
-      targetPort: 3000
+      port: 8080
+      targetPort: 8080
   selector:
     app: reverseservice
   type: NodePort
@@ -35,28 +35,20 @@ spec:
           image: keycloak/keycloak-gatekeeper:7.0.0
           imagePullPolicy: IfNotPresent
           args:
-            - --config=/etc/config/gatekeeper-config.yaml
             - --enable-logging=true
             - --enable-json-logging=true
             - --verbose=true
+            - --listen=:3000
+            - --discovery-url=http://keycloak.keycloak.svc:8180/auth/realms/greetingservice
+            - --client-id=greetingservice-client
+            - --client-secret=57803581-1d67-4851-9646-59b73018b6b4
             - --enable-forwarding=true
             - --forwarding-username=gsuser
             - --forwarding-password=gspass
-            - --forwarding-domain=greetingservice.svc.cluster.local
-          volumeMounts:
-            - name: gatekeeper-config
-              mountPath: /etc/config
+        #            - --forwarding-domains=greetingservice.svc.cluster.local
         - image: de.smartsquare/reverseservice
           imagePullPolicy: IfNotPresent
           name: reverseservice
           ports:
             - containerPort: 8080
       restartPolicy: Always
-      volumes:
-        - name: gatekeeper-config
-          configMap:
-            defaultMode: 420
-            name: gatekeeper-config
-            items:
-              - key: gatekeeper-config.yaml
-                path: gatekeeper-config.yaml

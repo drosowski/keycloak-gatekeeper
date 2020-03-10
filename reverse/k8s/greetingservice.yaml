@@ -1,0 +1,10 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: greetingservice
+  namespace: reverseservice
+spec:
+  type: ExternalName
+  externalName: greetingservice.greetingservice.svc.cluster.local
+  ports:
+    - port: 30080
