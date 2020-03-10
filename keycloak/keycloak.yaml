@@ -1,1 +1,58 @@
-
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: keycloak
+  namespace: keycloak
+spec:
+  selector:
+    matchLabels:
+      app: keycloak
+  template:
+    metadata:
+      labels:
+        app: keycloak
+    spec:
+      containers:
+        - env:
+            - name: KEYCLOAK_IMPORT
+              value: /tmp/greetingservice-realm.json
+            - name: KEYCLOAK_MIGRATION_STRATEGY
+              value: IGNORE_EXISTING
+          image: jboss/keycloak:8.0.1
+          volumeMounts:
+            - name: greetingservice-realm
+              mountPath: /tmp
+          lifecycle:
+            postStart:
+              exec:
+                command: ["/bin/sh", "-c", "/opt/jboss/keycloak/bin/add-user-keycloak.sh -r master -u keycloak -p keycloak123; /opt/jboss/keycloak/bin/add-user-keycloak.sh -r greetingservice -u gsuser -p gspass;"]
+          args: ["-Djboss.socket.binding.port-offset=100", "-b=0.0.0.0"]
+          imagePullPolicy: IfNotPresent
+          name: keycloak
+          ports:
+            - name: keycloak-http
+              containerPort: 8180
+      restartPolicy: Always
+      volumes:
+        - name: greetingservice-realm
+          configMap:
+            defaultMode: 420
+            name: greetingservice-realm
+            items:
+              - key: greetingservice-realm.json
+                path: greetingservice-realm.json
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: keycloak
+  namespace: keycloak
+spec:
+  ports:
+    - name: http
+      port: 8180
+      nodePort: 30081
+      targetPort: keycloak-http
+  selector:
+    app: keycloak
+  type: NodePort
