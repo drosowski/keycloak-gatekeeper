@@ -1,7 +1,7 @@
 {
   "realm" : "greetingservice",
-  "auth-server-url" : "http://localhost:8180/auth",
+  "auth-server-url" : "http://keycloak.keycloak.svc:8180/auth",
   "ssl-required" : "external",
-  "resource" : "greetingservice-client",
+  "resource" : "greetingservice-web",
   "enable-cors": true
 }

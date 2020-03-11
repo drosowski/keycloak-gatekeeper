@@ -17,14 +17,9 @@ const options = {
 Vue.use(VueLogger, options);
 
 
-//keycloak init options
-let initOptions = {
-  url: 'http://127.0.0.1:8180/auth', realm: 'greetingservice', clientId: 'greetingservice-client', onLoad:'login-required'
-}
-
 let keycloak = Keycloak('keycloak.json');
 
-keycloak.init({ onLoad: initOptions.onLoad }).success((auth) =>{
+keycloak.init({ onLoad: 'login-required' }).success((auth) =>{
 
   if(!auth) {
     window.location.reload();

@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: greetingservice
+  name: greetingservice-backend
   namespace: greetingservice
 spec:
   ports:
@@ -9,6 +9,21 @@ spec:
     nodePort: 30080
     port: 3000
     targetPort: 3000
+  selector:
+    app: greetingservice
+  type: NodePort
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: greetingservice-web
+  namespace: greetingservice
+spec:
+  ports:
+  - name: http
+    nodePort: 30088
+    port: 3100
+    targetPort: 3100
   selector:
     app: greetingservice
   type: NodePort
@@ -31,13 +46,29 @@ spec:
         app: greetingservice
     spec:
       containers:
-      - name: service-gatekeeper
+      - name: service-gatekeeper-web
         image: keycloak/keycloak-gatekeeper:7.0.0
         imagePullPolicy: IfNotPresent
         args:
           - --config=/etc/config/gatekeeper-config.yaml
           - --enable-logging=true
           - --enable-json-logging=true
+          - --client-id=greetingservice-web
+          - --listen=:3100
+          - --verbose=true
+        volumeMounts:
+          - name: gatekeeper-config
+            mountPath: /etc/config
+      - name: service-gatekeeper-backend
+        image: keycloak/keycloak-gatekeeper:7.0.0
+        imagePullPolicy: IfNotPresent
+        args:
+          - --config=/etc/config/gatekeeper-config.yaml
+          - --enable-logging=true
+          - --enable-json-logging=true
+          - --client-id=greetingservice-client
+          - --client-secret=57803581-1d67-4851-9646-59b73018b6b4
+          - --listen=:3000
           - --verbose=true
         volumeMounts:
           - name: gatekeeper-config

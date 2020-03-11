@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import axios from "axios"
+import {AXIOS} from '../http-common'
 
 export default {
   name: 'HelloWorld',
@@ -15,9 +15,9 @@ export default {
     }
   },
   mounted() {
-    axios
-      .get('https://127.0.0.1:30080/greeting?name=JUG%20Bielefeld', {headers: {'Authorization': 'Bearer ' + localStorage.getItem("vue-token")}})
-      .then(response => (this.msg = response.content))
+    AXIOS
+      .get('http://127.0.0.1:30088/greeting?name=JUG%20Bielefeld', {headers: {'Authorization': 'Bearer ' + localStorage.getItem("vue-token")}})
+      .then(response => (this.msg = response.data.content))
   }
 }
 </script>
