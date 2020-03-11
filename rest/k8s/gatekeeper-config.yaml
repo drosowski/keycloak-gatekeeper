@@ -12,6 +12,7 @@ data:
     listen: :3000
     enable-refresh-tokens: true
     enable-encrypted-token: false
+    enable-default-deny: false
     encryption-key: HA6KnOVUOK2nSvVa
     upstream-url: http://127.0.0.1:8080
     no-redirects: true
