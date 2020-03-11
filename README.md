@@ -45,6 +45,14 @@ https://www.keycloak.org/docs/latest/securing_apps/index.html#_spring_security_a
 The configuration for the Spring Boot adapter can be found in the branch `springsecurity-adapter`. 
 Just start the app with the main class (`RestServiceApplication`) from your IDE.
 
+## Frontend
+
+https://www.keycloak.org/docs/latest/securing_apps/index.html#_javascript_adapter
+
+The frontend consists of a VueJs application which uses the keycloak-js adapter.
+The application forwards to keycloak for the user to authenticate.
+It then uses the acquired `access_token` to call the `greeting` service.
+
 ## Gatekeeper
 
 The configuration for gatekeeper is in the `master` branch.
